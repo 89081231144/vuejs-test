@@ -1,11 +1,13 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const path = require('path');
 const webpack = require('webpack');
+const startAPI = require('./src/configureAPI');
 
 const { NODE_ENV } = process.env;
 
 module.exports = {
   devServer: {
+    before: startAPI,
     host: 'localhost',
     port: '8088',
     contentBase: path.resolve(__dirname, 'dist'),

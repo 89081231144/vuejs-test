@@ -10,12 +10,20 @@
           <p>You can clear cache and load data again.</p>
         </template>
         <template #footer>
-          <ui-button type="primary">
+          <ui-button type="primary" v-if="isCached" @click="resetCache()">
             Clear cache
           </ui-button>
         </template>
       </ui-alert>
-
+      <ui-button type="primary" @click="load()">
+        Load Data From Server
+      </ui-button>
+      <ui-button type="primary" v-if="isCached" @click="useCachsedData()">
+        Use Cached Data
+      </ui-button>
+      <ui-button type="primary" v-if="data.length&&!isCached" @click="setCache()">
+        Cache Data
+      </ui-button>
       <data-table
         :rows="data"
         :columns="columns"
@@ -63,14 +71,17 @@ export default {
       'data',
     ]),
   },
-
   created() {
-    this.load();
+    this.checkCash();
   },
-
   methods: {
     ...mapActions([
       'load',
+      'resetState',
+      'resetCache',
+      'setCache',
+      'checkCash',
+      'useCachsedData',
     ]),
   },
 };

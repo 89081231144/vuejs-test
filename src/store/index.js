@@ -8,6 +8,7 @@ export default new Vuex.Store({
 
   state: () => ({
     data: [],
+    storageName: 'savedTable',
     isLoading: false,
     isCached: false,
   }),
@@ -30,10 +31,8 @@ export default new Vuex.Store({
   actions: {
     async load({ commit }, params = {}) {
       commit('setState', { isLoading: true });
-
       try {
         const { data } = await api.getPayments(params);
-
         if (Array.isArray(data)) {
           commit('setState', { data });
         }
@@ -43,6 +42,28 @@ export default new Vuex.Store({
       } finally {
         commit('setState', { isLoading: false });
       }
+    },
+    setCache({ state: { data, storageName }, commit }) {
+      localStorage.setItem(storageName, JSON.stringify({ data }));
+      commit('setState', { isCached: true });
+    },
+    resetCache({ state: { storageName }, commit }) {
+      localStorage.removeItem(storageName);
+      commit('setState', { isCached: false });
+    },
+    checkCash({ state: { storageName }, commit }) {
+      const isCached = localStorage.getItem(storageName) != null;
+      commit('setState', { isCached });
+    },
+    useCachsedData({ state: { storageName }, commit }) {
+      const { data = [] } = JSON.parse(localStorage.getItem(storageName));
+      commit('setState', { data });
+    },
+  },
+
+  getters: {
+    getData(state) {
+      return state.data;
     },
   },
 });
